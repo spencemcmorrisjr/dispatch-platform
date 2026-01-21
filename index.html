@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driver Portal</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
+  header { background: #1a1a1a; color: #fff; padding: 15px; text-align: center; }
+  h1 { margin: 0; }
+  .container { padding: 20px; max-width: 900px; margin: auto; background: #fff; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);}
+  label { display: block; margin-top: 10px; }
+  input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
+  button { margin-top: 15px; padding: 10px 20px; border: none; border-radius: 5px; background: #1a73e8; color: white; font-weight: bold; cursor: pointer;}
+  button:hover { background: #155bb5; }
+  .section { margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px; }
+  .flex { display: flex; gap: 10px; flex-wrap: wrap; }
+  .flex input, .flex select { flex: 1; min-width: 150px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Driver Portal</h1>
+</header>
+
+<div class="container">
+  <!-- Catch Page / Signup Form -->
+  <section id="signup-section">
+    <h2>Sign Up</h2>
+    <form id="signup-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <label>Name: <input type="text" name="name" required></label>
+      <label>Email: <input type="email" name="email" required></label>
+      <label>Phone: <input type="tel" name="phone" required></label>
+      <button type="submit">Sign Up</button>
+    </form>
+  </section>
+
+  <!-- Driver Dashboard -->
+  <section id="dashboard-section" style="display:none;">
+    <h2>Driver Dashboard</h2>
+    
+    <div class="section">
+      <h3>Profile Details</h3>
+      <label>Truck & Trailer Info: <input type="text" id="truck-info"></label>
+      <label>Home City & State: <input type="text" id="home-city"></label>
+      <label>Minimum Cost per Mile ($): <input type="number" id="min-cost"></label>
+      <label>Minimum Profit %: <input type="number" id="min-profit"></label>
+      <label>Factoring Company:
+        <select id="factoring-company">
+          <option value="">Select...</option>
+          <option value="company1">Company 1</option>
+          <option value="company2">Company 2</option>
+          <option value="company3">Company 3</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="section">
+      <h3>Driver Preferences</h3>
+      <label>Sleep Until (e.g., 3:00pm): <input type="text" id="sleep-time"></label>
+      <label>Wake Me Only If Load Pays Minimum ($): <input type="number" id="wake-min"></label>
+      <label>States I Won't Drive To: <input type="text" id="no-states"></label>
+      <label>Weight Limit (lbs): <input type="number" id="weight-limit"></label>
+      <label>Loads I Don't Want: <textarea id="no-loads" rows="3"></textarea></label>
+    </div>
+
+    <div class="section">
+      <h3>Load Details</h3>
+      <label>Load ID: <input type="text" id="load-id"></label>
+      <label>Pickup Number: <input type="text" id="pickup-number"></label>
+      <label>Pickup Address: <input type="text" id="pickup-address"></label>
+      <label>Truck Entrance Address: <input type="text" id="truck-entrance"></label>
+      <label>Drop Address: <input type="text" id="drop-address"></label>
+      <label>Truck Entrance Address (Drop): <input type="text" id="drop-entrance"></label>
+      <label>Overnight Parking Spaces: <input type="number" id="parking-spaces"></label>
+      <label>Early Loading/Unloading Available:
+        <select id="early-loading">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </label>
+      <label>Paid Miles: <input type="number" id="paid-miles"></label>
+      <label>Driver Pay ($): <input type="number" id="driver-pay"></label>
+      <label>Dispatcher %: <input type="number" id="dispatcher-percent" value="10"></label>
+    </div>
+
+    <button id="save-dashboard">Save Dashboard Info</button>
+  </section>
+</div>
+
+<script>
+  const signupForm = document.getElementById('signup-form');
+  const signupSection = document.getElementById('signup-section');
+  const dashboardSection = document.getElementById('dashboard-section');
+  
+  // Simulate signup success
+  signupForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    alert('Signup successful! Dashboard unlocked.');
+    signupSection.style.display = 'none';
+    dashboardSection.style.display = 'block';
+  });
+
+  // Save dashboard info (local storage for now)
+  document.getElementById('save-dashboard').addEventListener('click', function(){
+    const dashboardData = {};
+    document.querySelectorAll('#dashboard-section input, #dashboard-section select, #dashboard-section textarea').forEach(el=>{
+      dashboardData[el.id] = el.value;
+    });
+    localStorage.setItem('driverDashboard', JSON.stringify(dashboardData));
+    alert('Dashboard info saved locally! (Later we will use Firebase)');
+    console.log('Saved Dashboard Data:', dashboardData);
+  });
+</script>
+
+</body>
+</html>
