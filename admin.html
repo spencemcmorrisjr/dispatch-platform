@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dispatch Admin Dashboard</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: #fff;
+    margin: 0;
+    padding: 15px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: none;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #2ea44f;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+  }
+
+  .note {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-top: 8px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>🚛 Dispatch Admin Dashboard</h1>
+
+<div class="card">
+  <h3>Assign Load to Driver</h3>
+
+  <label>Driver Name</label>
+  <input id="driverName" placeholder="John Smith" />
+
+  <label>Load ID</label>
+  <input id="loadId" />
+
+  <label>Pickup Address</label>
+  <textarea id="pickup"></textarea>
+
+  <label>Drop Address</label>
+  <textarea id="drop"></textarea>
+
+  <label>Paid Miles</label>
+  <input type="number" id="miles" />
+
+  <label>Rate Per Mile ($)</label>
+  <input type="number" id="rpm" />
+
+  <label>Dispatcher %</label>
+  <input type="number" id="dispatchPercent" value="10" />
+
+  <button onclick="saveLoad()">Save Load</button>
+
+  <p class="note">
+    ⚠️ Temporary local save. Firebase comes next.
+  </p>
+</div>
+
+<script>
+function saveLoad() {
+  const loadData = {
+    driver: driverName.value,
+    loadId: loadId.value,
+    pickup: pickup.value,
+    drop: drop.value,
+    miles: miles.value,
+    rpm: rpm.value,
+    dispatcherPercent: dispatchPercent.value,
+    timestamp: new Date().toISOString()
+  };
+
+  localStorage.setItem("adminLoad", JSON.stringify(loadData));
+  alert("Load saved. Ready to sync to driver dashboard next.");
+}
+</script>
+
+</body>
+</html>
