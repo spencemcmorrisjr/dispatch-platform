@@ -18,6 +18,28 @@
   .flex input, .flex select { flex: 1; min-width: 150px; }
 </style>
 </head>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+  // 🔥 YOUR FIREBASE CONFIG GOES HERE
+  const firebaseConfig = {
+    apiKey: "PASTE_FROM_FIREBASE",
+    authDomain: "PASTE_FROM_FIREBASE",
+    projectId: "PASTE_FROM_FIREBASE",
+    storageBucket: "PASTE_FROM_FIREBASE",
+    messagingSenderId: "PASTE_FROM_FIREBASE",
+    appId: "PASTE_FROM_FIREBASE"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+  
 <body>
 
 <header>
@@ -113,6 +135,26 @@
     console.log('Saved Dashboard Data:', dashboardData);
   });
 </script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCuVHO6lV4URp_c-b28wzJ7FLKsex5HlYI",
+    authDomain: "dispatch-platform-6e7f1.firebaseapp.com",
+    projectId: "dispatch-platform-6e7f1",
+    storageBucket: "dispatch-platform-6e7f1.firebasestorage.app",
+    messagingSenderId: "997904614665",
+    appId: "1:997904614665:web:7e475c06b131ff2ee8bfd8"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
 </body>
+
 </html>
