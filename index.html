@@ -1,174 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Driver Portal</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
-  header { background: #1a1a1a; color: #fff; padding: 15px; text-align: center; }
-  h1 { margin: 0; }
-  .container { padding: 20px; max-width: 900px; margin: auto; background: #fff; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);}
-  label { display: block; margin-top: 10px; }
-  input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
-  button { margin-top: 15px; padding: 10px 20px; border: none; border-radius: 5px; background: #1a73e8; color: white; font-weight: bold; cursor: pointer;}
-  button:hover { background: #155bb5; }
-  .section { margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px; }
-  .flex { display: flex; gap: 10px; flex-wrap: wrap; }
-  .flex input, .flex select { flex: 1; min-width: 150px; }
-</style>
+  <meta charset="UTF-8" />
+  <title>Driver Signup – Dispatch Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+    }
+    .box {
+      max-width: 400px;
+      margin: auto;
+      background: #020617;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background: #22c55e;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #16a34a;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-<script>
-  // 🔥 YOUR FIREBASE CONFIG GOES HERE
-  const firebaseConfig = {
-    apiKey: "PASTE_FROM_FIREBASE",
-    authDomain: "PASTE_FROM_FIREBASE",
-    projectId: "PASTE_FROM_FIREBASE",
-    storageBucket: "PASTE_FROM_FIREBASE",
-    messagingSenderId: "PASTE_FROM_FIREBASE",
-    appId: "PASTE_FROM_FIREBASE"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-</script>
-  
 <body>
 
-<header>
-  <h1>Driver Portal</h1>
-</header>
+  <div class="box" id="authBox">
+    <h2>Driver Signup</h2>
 
-<div class="container">
-  <!-- Catch Page / Signup Form -->
-  <section id="signup-section">
-    <h2>Sign Up</h2>
-    <form id="signup-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-      <label>Name: <input type="text" name="name" required></label>
-      <label>Email: <input type="email" name="email" required></label>
-      <label>Phone: <input type="tel" name="phone" required></label>
-      <button type="submit">Sign Up</button>
-    </form>
-  </section>
+    <input id="name" placeholder="Full Name" />
+    <input id="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
 
-  <!-- Driver Dashboard -->
-  <section id="dashboard-section" style="display:none;">
+    <button onclick="signup()">Create Account</button>
+
+    <hr style="margin:20px 0;">
+
+    <h3>Already have an account?</h3>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div class="box hidden" id="dashboard">
     <h2>Driver Dashboard</h2>
-    
-    <div class="section">
-      <h3>Profile Details</h3>
-      <label>Truck & Trailer Info: <input type="text" id="truck-info"></label>
-      <label>Home City & State: <input type="text" id="home-city"></label>
-      <label>Minimum Cost per Mile ($): <input type="number" id="min-cost"></label>
-      <label>Minimum Profit %: <input type="number" id="min-profit"></label>
-      <label>Factoring Company:
-        <select id="factoring-company">
-          <option value="">Select...</option>
-          <option value="company1">Company 1</option>
-          <option value="company2">Company 2</option>
-          <option value="company3">Company 3</option>
-        </select>
-      </label>
-    </div>
+    <p id="welcome"></p>
+    <button onclick="logout()">Logout</button>
+  </div>
 
-    <div class="section">
-      <h3>Driver Preferences</h3>
-      <label>Sleep Until (e.g., 3:00pm): <input type="text" id="sleep-time"></label>
-      <label>Wake Me Only If Load Pays Minimum ($): <input type="number" id="wake-min"></label>
-      <label>States I Won't Drive To: <input type="text" id="no-states"></label>
-      <label>Weight Limit (lbs): <input type="number" id="weight-limit"></label>
-      <label>Loads I Don't Want: <textarea id="no-loads" rows="3"></textarea></label>
-    </div>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    <div class="section">
-      <h3>Load Details</h3>
-      <label>Load ID: <input type="text" id="load-id"></label>
-      <label>Pickup Number: <input type="text" id="pickup-number"></label>
-      <label>Pickup Address: <input type="text" id="pickup-address"></label>
-      <label>Truck Entrance Address: <input type="text" id="truck-entrance"></label>
-      <label>Drop Address: <input type="text" id="drop-address"></label>
-      <label>Truck Entrance Address (Drop): <input type="text" id="drop-entrance"></label>
-      <label>Overnight Parking Spaces: <input type="number" id="parking-spaces"></label>
-      <label>Early Loading/Unloading Available:
-        <select id="early-loading">
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
-      </label>
-      <label>Paid Miles: <input type="number" id="paid-miles"></label>
-      <label>Driver Pay ($): <input type="number" id="driver-pay"></label>
-      <label>Dispatcher %: <input type="number" id="dispatcher-percent" value="10"></label>
-    </div>
-
-    <button id="save-dashboard">Save Dashboard Info</button>
-  </section>
-</div>
-
-<script>
-  const signupForm = document.getElementById('signup-form');
-  const signupSection = document.getElementById('signup-section');
-  const dashboardSection = document.getElementById('dashboard-section');
-  
-  // Simulate signup success
-  signupForm.addEventListener('submit', function(e){
-    e.preventDefault();
-    alert('Signup successful! Dashboard unlocked.');
-    signupSection.style.display = 'none';
-    dashboardSection.style.display = 'block';
-  });
-
-  // Save dashboard info (local storage for now)
-  document.getElementById('save-dashboard').addEventListener('click', function(){
-    const dashboardData = {};
-    document.querySelectorAll('#dashboard-section input, #dashboard-section select, #dashboard-section textarea').forEach(el=>{
-      dashboardData[el.id] = el.value;
-    });
-    localStorage.setItem('driverDashboard', JSON.stringify(dashboardData));
-    alert('Dashboard info saved locally! (Later we will use Firebase)');
-    console.log('Saved Dashboard Data:', dashboardData);
-  });
-</script>
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCuVHO6lV4URp_c-b28wzJ7FLKsex5HlYI",
-    authDomain: "dispatch-platform-6e7f1.firebaseapp.com",
-    projectId: "dispatch-platform-6e7f1",
-    storageBucket: "dispatch-platform-6e7f1.firebasestorage.app",
-    messagingSenderId: "997904614665",
-    appId: "1:997904614665:web:7e475c06b131ff2ee8bfd8"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-</script>
   <script>
-auth.onAuthStateChanged(user => {
-  if (user) {
-    db.collection("drivers").doc(user.uid).set({
-      uid: user.uid,
-      email: user.email,
-      lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    const firebaseConfig = {
+      apiKey: "AIzaSyCuVHO6lV4URp_c-b28wzJ7FLKsex5HlYI",
+      authDomain: "dispatch-platform-6e7f1.firebaseapp.com",
+      projectId: "dispatch-platform-6e7f1",
+      storageBucket: "dispatch-platform-6e7f1.firebasestorage.app",
+      messagingSenderId: "997904614665",
+      appId: "1:997904614665:web:7e475c06b131ff2ee8bfd8"
+    };
 
-    console.log("Driver synced:", user.email);
-  }
-});
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function signup() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(cred => {
+          return db.collection("drivers").doc(cred.user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            role: "driver",
+            status: "active"
+          });
+        })
+        .then(() => {
+          alert("Driver account created!");
+        })
+        .catch(err => alert(err.message));
+    }
+
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(err => alert(err.message));
+    }
+
+    function logout() {
+      auth.signOut();
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("authBox").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("welcome").innerText =
+          "Welcome, " + (user.email);
+      } else {
+        document.getElementById("authBox").classList.remove("hidden");
+        document.getElementById("dashboard").classList.add("hidden");
+      }
+    });
   </script>
+
 </body>
-
 </html>
-
