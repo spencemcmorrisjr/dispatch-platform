@@ -155,6 +155,20 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 </script>
+  <script>
+auth.onAuthStateChanged(user => {
+  if (user) {
+    db.collection("drivers").doc(user.uid).set({
+      uid: user.uid,
+      email: user.email,
+      lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    console.log("Driver synced:", user.email);
+  }
+});
+  </script>
 </body>
 
 </html>
+
