@@ -4,47 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Dispatch Platform – Driver Portal</title>
-
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 0;
-}
-header {
-  background: #111;
-  color: #fff;
-  padding: 15px;
-  text-align: center;
-}
-.container {
-  max-width: 900px;
-  margin: 20px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-}
-input, textarea, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-}
-button {
-  background: #1a73e8;
-  color: white;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-button:hover {
-  background: #155bb5;
-}
-.section {
-  margin-top: 30px;
-  border-top: 1px solid #ddd;
-  padding-top: 20px;
-}
+body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+header { background: #111; color: #fff; padding: 15px; text-align: center; }
+.container { max-width: 900px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 8px; }
+input, textarea, button { width: 100%; padding: 10px; margin-top: 8px; }
+button { background: #1a73e8; color: white; border: none; font-weight: bold; cursor: pointer; }
+button:hover { background: #155bb5; }
+.section { margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px; }
 .hidden { display: none; }
 </style>
 
@@ -64,21 +31,19 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const auth = firebase.auth();
 const db = firebase.firestore();
 </script>
 </head>
 
 <body>
-
 <header>
   <h1>Driver Portal</h1>
 </header>
 
 <div class="container">
 
-<!-- AUTH -->
+<!-- SIGN UP / LOGIN -->
 <div id="authSection">
   <h2>Driver Sign Up / Login</h2>
   <input id="email" type="email" placeholder="Email">
@@ -116,17 +81,19 @@ const db = firebase.firestore();
 
 <script>
 function signup() {
-  auth.createUserWithEmailAndPassword(
-    email.value,
-    password.value
-  ).catch(err => alert(err.message));
+  auth.createUserWithEmailAndPassword(email.value, password.value)
+    .then(cred => {
+      return db.collection("drivers").doc(cred.user.uid).set({
+        email: email.value,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    })
+    .catch(alert);
 }
 
 function login() {
-  auth.signInWithEmailAndPassword(
-    email.value,
-    password.value
-  ).catch(err => alert(err.message));
+  auth.signInWithEmailAndPassword(email.value, password.value)
+    .catch(alert);
 }
 
 function logout() {
@@ -138,32 +105,22 @@ auth.onAuthStateChanged(user => {
     authSection.classList.add("hidden");
     dashboard.classList.remove("hidden");
 
-    const ref = db.collection("drivers").doc(user.uid);
-
-    // Ensure base driver record exists
-    ref.set({
-      uid: user.uid,
-      email: user.email,
-      role: "driver",
-      status: "active",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-
-    // 🔑 LOAD EXISTING PROFILE DATA
-    ref.get().then(doc => {
-      if (doc.exists) {
-        const d = doc.data();
-        truck.value = d.truck || "";
-        home.value = d.home || "";
-        minCost.value = d.minCost || "";
-        minProfit.value = d.minProfit || "";
-        sleep.value = d.sleep || "";
-        wakePay.value = d.wakePay || "";
-        noStates.value = d.noStates || "";
-        weight.value = d.weight || "";
-        noLoads.value = d.noLoads || "";
-      }
-    });
+    // FETCH DRIVER DATA AND AUTO-FILL
+    db.collection("drivers").doc(user.uid).get()
+      .then(doc => {
+        if(doc.exists){
+          const data = doc.data();
+          truck.value = data.truck || "";
+          home.value = data.home || "";
+          minCost.value = data.minCost || "";
+          minProfit.value = data.minProfit || "";
+          sleep.value = data.sleep || "";
+          wakePay.value = data.wakePay || "";
+          noStates.value = data.noStates || "";
+          weight.value = data.weight || "";
+          noLoads.value = data.noLoads || "";
+        }
+      }).catch(console.error);
 
   } else {
     authSection.classList.remove("hidden");
@@ -187,8 +144,8 @@ function saveProfile() {
     noLoads: noLoads.value,
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   })
-  .then(() => alert("Profile saved to Firestore ✅"))
-  .catch(err => alert(err.message));
+  .then(() => alert("Profile saved to Firestore"))
+  .catch(alert);
 }
 </script>
 
