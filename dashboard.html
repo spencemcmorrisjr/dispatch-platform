@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dispatch Platform – Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #020617;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #1e293b;
+      text-align: left;
+    }
+    th {
+      background: #020617;
+    }
+    tr:hover {
+      background: #1e293b;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🚛 Driver Submissions</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>MC / DOT</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody id="submissions"></tbody>
+</table>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "XXXX",
+    appId: "XXXX"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const table = document.getElementById("submissions");
+
+  const snapshot = await getDocs(collection(db, "drivers"));
+  snapshot.forEach(doc => {
+    const d = doc.data();
+    table.innerHTML += `
+      <tr>
+        <td>${d.fullName || ""}</td>
+        <td>${d.email || ""}</td>
+        <td>${d.phone || ""}</td>
+        <td>${d.mc || d.dot || ""}</td>
+        <td>${new Date(d.createdAt?.seconds * 1000).toLocaleDateString()}</td>
+      </tr>
+    `;
+  });
+</script>
+
+</body>
+</html>
