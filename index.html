@@ -1,133 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Driver Signup – Dispatch Platform</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dispatch Platform – Driver Portal</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      padding: 20px;
-    }
-    .box {
-      max-width: 400px;
-      margin: auto;
-      background: #020617;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      background: #22c55e;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #16a34a;
-    }
-    .hidden {
-      display: none;
-    }
-  </style>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background: #111;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+}
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+input, textarea, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+}
+button {
+  background: #1a73e8;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+.section {
+  margin-top: 30px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+.hidden { display: none; }
+</style>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCuVHO6lV4URp_c-b28wzJ7FLKsex5HlYI",
+  authDomain: "dispatch-platform-6e7f1.firebaseapp.com",
+  projectId: "dispatch-platform-6e7f1",
+  storageBucket: "dispatch-platform-6e7f1.firebasestorage.app",
+  messagingSenderId: "997904614665",
+  appId: "1:997904614665:web:7e475c06b131ff2ee8bfd8"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+</script>
 </head>
 
 <body>
 
-  <div class="box" id="authBox">
-    <h2>Driver Signup</h2>
+<header>
+  <h1>Driver Portal</h1>
+</header>
 
-    <input id="name" placeholder="Full Name" />
-    <input id="email" placeholder="Email" />
-    <input id="password" type="password" placeholder="Password" />
+<div class="container">
 
-    <button onclick="signup()">Create Account</button>
+<!-- SIGN UP / LOGIN -->
+<div id="authSection">
+  <h2>Driver Sign Up / Login</h2>
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="signup()">Sign Up</button>
+  <button onclick="login()">Login</button>
+</div>
 
-    <hr style="margin:20px 0;">
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+  <h2>Driver Dashboard</h2>
 
-    <h3>Already have an account?</h3>
-    <button onclick="login()">Login</button>
+  <div class="section">
+    <h3>Driver Profile</h3>
+    <input id="truck" placeholder="Truck & Trailer Info">
+    <input id="home" placeholder="Home City & State">
+    <input id="minCost" type="number" placeholder="Minimum Cost per Mile">
+    <input id="minProfit" type="number" placeholder="Minimum Profit %">
   </div>
 
-  <div class="box hidden" id="dashboard">
-    <h2>Driver Dashboard</h2>
-    <p id="welcome"></p>
-    <button onclick="logout()">Logout</button>
+  <div class="section">
+    <h3>Preferences</h3>
+    <input id="sleep" placeholder="Sleeping until (ex: 3:00 PM)">
+    <input id="wakePay" type="number" placeholder="Wake me if load pays at least $">
+    <input id="noStates" placeholder="States I avoid">
+    <input id="weight" type="number" placeholder="Max weight (lbs)">
+    <textarea id="noLoads" placeholder="Loads I refuse"></textarea>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <button onclick="saveProfile()">Save Profile</button>
+  <button onclick="logout()">Logout</button>
+</div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCuVHO6lV4URp_c-b28wzJ7FLKsex5HlYI",
-      authDomain: "dispatch-platform-6e7f1.firebaseapp.com",
-      projectId: "dispatch-platform-6e7f1",
-      storageBucket: "dispatch-platform-6e7f1.firebasestorage.app",
-      messagingSenderId: "997904614665",
-      appId: "1:997904614665:web:7e475c06b131ff2ee8bfd8"
-    };
+</div>
 
-    firebase.initializeApp(firebaseConfig);
+<script>
+function signup() {
+  auth.createUserWithEmailAndPassword(
+    email.value,
+    password.value
+  ).catch(alert);
+}
 
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+function login() {
+  auth.signInWithEmailAndPassword(
+    email.value,
+    password.value
+  ).catch(alert);
+}
 
-    function signup() {
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+function logout() {
+  auth.signOut();
+}
 
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(cred => {
-          return db.collection("drivers").doc(cred.user.uid).set({
-            name: name,
-            email: email,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            role: "driver",
-            status: "active"
-          });
-        })
-        .then(() => {
-          alert("Driver account created!");
-        })
-        .catch(err => alert(err.message));
-    }
+auth.onAuthStateChanged(user => {
+  if (user) {
+    authSection.classList.add("hidden");
+    dashboard.classList.remove("hidden");
 
-    function login() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+    db.collection("drivers").doc(user.uid).set({
+      uid: user.uid,
+      email: user.email,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
 
-      auth.signInWithEmailAndPassword(email, password)
-        .catch(err => alert(err.message));
-    }
+  } else {
+    authSection.classList.remove("hidden");
+    dashboard.classList.add("hidden");
+  }
+});
 
-    function logout() {
-      auth.signOut();
-    }
+function saveProfile() {
+  const user = auth.currentUser;
+  if (!user) return;
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("authBox").classList.add("hidden");
-        document.getElementById("dashboard").classList.remove("hidden");
-        document.getElementById("welcome").innerText =
-          "Welcome, " + (user.email);
-      } else {
-        document.getElementById("authBox").classList.remove("hidden");
-        document.getElementById("dashboard").classList.add("hidden");
-      }
-    });
-  </script>
+  db.collection("drivers").doc(user.uid).update({
+    truck: truck.value,
+    home: home.value,
+    minCost: minCost.value,
+    minProfit: minProfit.value,
+    sleep: sleep.value,
+    wakePay: wakePay.value,
+    noStates: noStates.value,
+    weight: weight.value,
+    noLoads: noLoads.value,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    alert("Profile saved to Firestore");
+  }).catch(alert);
+}
+</script>
 
 </body>
 </html>
