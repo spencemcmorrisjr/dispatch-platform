@@ -24,3 +24,4 @@ class Load(Base):
     origin = Column(String, nullable=False)
     destination = Column(String, nullable=False)
     rate = Column(Float, nullable=False)
+    
