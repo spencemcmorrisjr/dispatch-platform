@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Driver Signup – Dispatch Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+    }
+    .box {
+      max-width: 400px;
+      margin: auto;
+      background: #020617;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background: #22c55e;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #16a34a;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box" id="authBox">
+    <h2>Driver Signup</h2>
+
+    <input id="name" placeholder="Full Name" />
+    <input id="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+
+    <button onclick="signup()">Create Account</button>
+
+    <hr style="margin:20px 0;">
+
+    <h3>Already have an account?</h3>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div class="box hidden" id="dashboard">
+    <h2>Driver Dashboard</h2>
+    <p id="welcome"></p>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCuVHO6lV4URp_c-b28wzJ7FLKsex5HlYI",
+      authDomain: "dispatch-platform-6e7f1.firebaseapp.com",
+      projectId: "dispatch-platform-6e7f1",
+      storageBucket: "dispatch-platform-6e7f1.firebasestorage.app",
+      messagingSenderId: "997904614665",
+      appId: "1:997904614665:web:7e475c06b131ff2ee8bfd8"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function signup() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(cred => {
+          return db.collection("drivers").doc(cred.user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            role: "driver",
+            status: "active"
+          });
+        })
+        .then(() => {
+          alert("Driver account created!");
+        })
+        .catch(err => alert(err.message));
+    }
+
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(err => alert(err.message));
+    }
+
+    function logout() {
+      auth.signOut();
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("authBox").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("welcome").innerText =
+          "Welcome, " + (user.email);
+      } else {
+        document.getElementById("authBox").classList.remove("hidden");
+        document.getElementById("dashboard").classList.add("hidden");
+      }
+    });
+  </script>
+
+</body>
+</html>

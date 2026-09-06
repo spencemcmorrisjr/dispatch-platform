@@ -1,0 +1,35 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.database import get_db
+from app.models.load import Load
+from app.schemas.load import LoadCreate, LoadRead
+
+router = APIRouter()
+
+
+@router.post("/loads/", response_model=LoadRead)
+def create_load(load: LoadCreate, db: Session = Depends(get_db)):
+    db_load = Load(
+        load_number=load.load_number,
+        broker_name=load.broker_name,
+        pickup_location=load.pickup_location,
+        delivery_location=load.delivery_location,
+        pickup_date=load.pickup_date,
+        delivery_date=load.delivery_date,
+        rate=load.rate,
+        status=load.status,
+        driver_id=load.driver_id,
+        truck_id=load.truck_id,
+    )
+
+    db.add(db_load)
+    db.commit()
+    db.refresh(db_load)
+
+    return db_load
+
+
+@router.get("/loads/", response_model=list[LoadRead])
+def read_loads(db: Session = Depends(get_db)):
+    return db.query(Load).all()

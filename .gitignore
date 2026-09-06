@@ -8,3 +8,7 @@ backend/.env
 
 # OS
 .DS_Store
+
+# Local database files
+dispatch.db
+dispatch_backup.db
