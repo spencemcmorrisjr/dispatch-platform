@@ -1,17 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.schemas.truck import TruckCreate, TruckRead
-from app.models.truck import Truck
 from app.database import get_db
+from app.models.truck import Truck
+from app.schemas.truck import TruckCreate, TruckRead
+
 
 router = APIRouter()
 
 
-# CREATE TRUCK
 @router.post("/trucks/", response_model=TruckRead)
 def create_truck(truck: TruckCreate, db: Session = Depends(get_db)):
-
     db_truck = Truck(
         unit_number=truck.unit_number,
         vin=truck.vin,
@@ -22,7 +21,7 @@ def create_truck(truck: TruckCreate, db: Session = Depends(get_db)):
         dot_inspection_expiration=truck.dot_inspection_expiration,
         insurance_expiration=truck.insurance_expiration,
         status=truck.status,
-        driver_id=truck.driver_id
+        driver_id=truck.driver_id,
     )
 
     db.add(db_truck)
@@ -32,45 +31,31 @@ def create_truck(truck: TruckCreate, db: Session = Depends(get_db)):
     return db_truck
 
 
-# READ ALL TRUCKS
 @router.get("/trucks/", response_model=list[TruckRead])
 def read_trucks(db: Session = Depends(get_db)):
-
-    trucks = db.query(Truck).all()
-
-    return trucks
+    return db.query(Truck).all()
 
 
-# READ ONE TRUCK
 @router.get("/trucks/{truck_id}", response_model=TruckRead)
 def read_truck(truck_id: int, db: Session = Depends(get_db)):
-
     truck = db.query(Truck).filter(Truck.id == truck_id).first()
 
     if truck is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Truck not found"
-        )
+        raise HTTPException(status_code=404, detail="Truck not found")
 
     return truck
 
 
-# UPDATE TRUCK
 @router.put("/trucks/{truck_id}", response_model=TruckRead)
 def update_truck(
     truck_id: int,
     truck_update: TruckCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-
     truck = db.query(Truck).filter(Truck.id == truck_id).first()
 
     if truck is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Truck not found"
-        )
+        raise HTTPException(status_code=404, detail="Truck not found")
 
     truck.unit_number = truck_update.unit_number
     truck.vin = truck_update.vin
@@ -89,21 +74,14 @@ def update_truck(
     return truck
 
 
-# DELETE TRUCK
 @router.delete("/trucks/{truck_id}")
 def delete_truck(truck_id: int, db: Session = Depends(get_db)):
-
     truck = db.query(Truck).filter(Truck.id == truck_id).first()
 
     if truck is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Truck not found"
-        )
+        raise HTTPException(status_code=404, detail="Truck not found")
 
     db.delete(truck)
     db.commit()
 
-    return {
-        "message": "Truck deleted successfully"
-    }
+    return {"message": "Truck deleted successfully"}
