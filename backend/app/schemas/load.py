@@ -1,19 +1,25 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from app.database import Base
+from pydantic import BaseModel
 
 
-class Load(Base):
-    __tablename__ = "loads"
+class LoadBase(BaseModel):
+    load_number: str
+    broker_name: str
+    pickup_location: str
+    delivery_location: str
+    pickup_date: str
+    delivery_date: str
+    rate: str
+    status: str = "available"
+    driver_id: int | None = None
+    truck_id: int | None = None
 
-    id = Column(Integer, primary_key=True, index=True)
-    load_number = Column(String, unique=True, index=True)
-    broker_name = Column(String)
-    pickup_location = Column(String)
-    delivery_location = Column(String)
-    pickup_date = Column(String)
-    delivery_date = Column(String)
-    rate = Column(String)
-    status = Column(String, default="available")
 
-    driver_id = Column(Integer, ForeignKey("drivers.id"))
-    truck_id = Column(Integer, ForeignKey("trucks.id"))
+class LoadCreate(LoadBase):
+    pass
+
+
+class LoadRead(LoadBase):
+    id: int
+
+    class Config:
+        from_attributes = True

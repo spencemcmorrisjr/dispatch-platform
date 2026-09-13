@@ -5,10 +5,12 @@ from app.database import Base, engine
 
 from app.routes import driver
 from app.routes import truck
+from app.routes import load
 
 # Import models so SQLAlchemy knows about the tables
 from app.models import driver as driver_model
 from app.models import truck as truck_model
+from app.models import load as load_model
 
 
 # Create database tables
@@ -34,6 +36,7 @@ app.add_middleware(
 # Routes
 app.include_router(driver.router)
 app.include_router(truck.router)
+app.include_router(load.router)
 
 
 @app.get("/")
