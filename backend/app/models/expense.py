@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Float, Date, DateTime, ForeignKey, Text
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -14,7 +14,7 @@ class Expense(Base):
 
     expense_type = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
-    expense_date = Column(String, nullable=False)
+    expense_date = Column(Date, nullable=False)
 
     vendor = Column(String, nullable=True)
     receipt_number = Column(String, nullable=True)

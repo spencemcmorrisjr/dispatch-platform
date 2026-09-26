@@ -1,4 +1,4 @@
-from logging.config import fileConfig
+﻿from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -7,26 +7,22 @@ from alembic import context
 
 from app.database import Base
 
+# Import every model so Alembic can see the complete metadata.
 from app.models import driver
 from app.models import truck
+from app.models import load
+from app.models import expense
+
+target_metadata = Base.metadata
 
 
-# Alembic Config object
 config = context.config
 
-
-# Configure logging
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
-# Tell Alembic about our SQLAlchemy models
-target_metadata = Base.metadata
-
-
 def run_migrations_offline() -> None:
-    """Run migrations in offline mode."""
-
     url = config.get_main_option("sqlalchemy.url")
 
     context.configure(
@@ -41,8 +37,6 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in online mode."""
-
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -50,10 +44,9 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-
         context.configure(
             connection=connection,
-            target_metadata=target_metadata
+            target_metadata=target_metadata,
         )
 
         with context.begin_transaction():
@@ -62,6 +55,5 @@ def run_migrations_online() -> None:
 
 if context.is_offline_mode():
     run_migrations_offline()
-
 else:
     run_migrations_online()
