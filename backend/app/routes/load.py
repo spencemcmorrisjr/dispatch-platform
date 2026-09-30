@@ -6,10 +6,14 @@ from app.models.load import Load
 from app.schemas.load import LoadCreate, LoadRead
 
 
-router = APIRouter()
+router = APIRouter(tags=["Loads"])
 
 
-@router.post("/loads/", response_model=LoadRead)
+@router.post(
+    "/loads/",
+    response_model=LoadRead,
+    summary="Create load",
+)
 def create_load(load: LoadCreate, db: Session = Depends(get_db)):
     db_load = Load(
         load_number=load.load_number,
@@ -31,12 +35,20 @@ def create_load(load: LoadCreate, db: Session = Depends(get_db)):
     return db_load
 
 
-@router.get("/loads/", response_model=list[LoadRead])
+@router.get(
+    "/loads/",
+    response_model=list[LoadRead],
+    summary="View all loads",
+)
 def read_loads(db: Session = Depends(get_db)):
     return db.query(Load).all()
 
 
-@router.get("/loads/{load_id}", response_model=LoadRead)
+@router.get(
+    "/loads/{load_id}",
+    response_model=LoadRead,
+    summary="View 1 load",
+)
 def read_load(load_id: int, db: Session = Depends(get_db)):
     load = db.query(Load).filter(Load.id == load_id).first()
 
@@ -46,7 +58,11 @@ def read_load(load_id: int, db: Session = Depends(get_db)):
     return load
 
 
-@router.put("/loads/{load_id}", response_model=LoadRead)
+@router.put(
+    "/loads/{load_id}",
+    response_model=LoadRead,
+    summary="Update load",
+)
 def update_load(
     load_id: int,
     load_update: LoadCreate,
@@ -74,7 +90,10 @@ def update_load(
     return load
 
 
-@router.delete("/loads/{load_id}")
+@router.delete(
+    "/loads/{load_id}",
+    summary="Delete load",
+)
 def delete_load(load_id: int, db: Session = Depends(get_db)):
     load = db.query(Load).filter(Load.id == load_id).first()
 

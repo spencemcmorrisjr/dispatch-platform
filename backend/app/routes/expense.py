@@ -12,7 +12,11 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=ExpenseRead)
+@router.post(
+    "/",
+    response_model=ExpenseRead,
+    summary="Create Expense",
+)
 def create_expense(expense: ExpenseCreate, db: Session = Depends(get_db)):
     db_expense = Expense(**expense.model_dump())
     db.add(db_expense)
@@ -22,12 +26,20 @@ def create_expense(expense: ExpenseCreate, db: Session = Depends(get_db)):
     return db_expense
 
 
-@router.get("/", response_model=list[ExpenseRead])
+@router.get(
+    "/",
+    response_model=list[ExpenseRead],
+    summary="View All Expenses",
+)
 def get_expenses(db: Session = Depends(get_db)):
     return db.query(Expense).all()
 
 
-@router.get("/{expense_id}", response_model=ExpenseRead)
+@router.get(
+    "/{expense_id}",
+    response_model=ExpenseRead,
+    summary="View Expense",
+)
 def get_expense(expense_id: int, db: Session = Depends(get_db)):
     expense = db.query(Expense).filter(Expense.id == expense_id).first()
 
@@ -40,7 +52,11 @@ def get_expense(expense_id: int, db: Session = Depends(get_db)):
     return expense
 
 
-@router.put("/{expense_id}", response_model=ExpenseRead)
+@router.put(
+    "/{expense_id}",
+    response_model=ExpenseRead,
+    summary="Update Expense",
+)
 def update_expense(
     expense_id: int,
     expense_data: ExpenseCreate,
@@ -63,7 +79,10 @@ def update_expense(
     return expense
 
 
-@router.delete("/{expense_id}")
+@router.delete(
+    "/{expense_id}",
+    summary="Delete Expense",
+)
 def delete_expense(expense_id: int, db: Session = Depends(get_db)):
     expense = db.query(Expense).filter(Expense.id == expense_id).first()
 

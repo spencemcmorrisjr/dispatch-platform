@@ -9,7 +9,12 @@ from app.schemas.truck import TruckCreate, TruckRead
 router = APIRouter()
 
 
-@router.post("/trucks/", response_model=TruckRead)
+@router.post(
+    "/trucks/",
+    response_model=TruckRead,
+    tags=["Trucks"],
+    summary="Create Truck",
+)
 def create_truck(truck: TruckCreate, db: Session = Depends(get_db)):
     db_truck = Truck(
         unit_number=truck.unit_number,
@@ -31,12 +36,22 @@ def create_truck(truck: TruckCreate, db: Session = Depends(get_db)):
     return db_truck
 
 
-@router.get("/trucks/", response_model=list[TruckRead])
+@router.get(
+    "/trucks/",
+    response_model=list[TruckRead],
+    tags=["Trucks"],
+    summary="View All Trucks",
+)
 def read_trucks(db: Session = Depends(get_db)):
     return db.query(Truck).all()
 
 
-@router.get("/trucks/{truck_id}", response_model=TruckRead)
+@router.get(
+    "/trucks/{truck_id}",
+    response_model=TruckRead,
+    tags=["Trucks"],
+    summary="View Truck",
+)
 def read_truck(truck_id: int, db: Session = Depends(get_db)):
     truck = db.query(Truck).filter(Truck.id == truck_id).first()
 
@@ -46,7 +61,12 @@ def read_truck(truck_id: int, db: Session = Depends(get_db)):
     return truck
 
 
-@router.put("/trucks/{truck_id}", response_model=TruckRead)
+@router.put(
+    "/trucks/{truck_id}",
+    response_model=TruckRead,
+    tags=["Trucks"],
+    summary="Update Truck",
+)
 def update_truck(
     truck_id: int,
     truck_update: TruckCreate,
@@ -74,7 +94,11 @@ def update_truck(
     return truck
 
 
-@router.delete("/trucks/{truck_id}")
+@router.delete(
+    "/trucks/{truck_id}",
+    tags=["Trucks"],
+    summary="Delete Truck",
+)
 def delete_truck(truck_id: int, db: Session = Depends(get_db)):
     truck = db.query(Truck).filter(Truck.id == truck_id).first()
 
