@@ -20,6 +20,8 @@ class TruckCreate(TruckBase):
 
 class TruckRead(TruckBase):
     id: int
+    driver_name: str | None = None
+    driver_company_name: str | None = None
 
     class Config:
         from_attributes = True

@@ -11,6 +11,7 @@ class DriverBase(BaseModel):
     preferred_lanes: str | None = None
     home_time: str | None = None
     no_go_states: str | None = None
+    company_name: str | None = None
     status: str | None = "active"
 
 
@@ -20,6 +21,8 @@ class DriverCreate(DriverBase):
 
 class DriverRead(DriverBase):
     id: int
+    truck_id: int | None = None
+    truck_unit_number: str | None = None
 
     class Config:
         from_attributes = True
