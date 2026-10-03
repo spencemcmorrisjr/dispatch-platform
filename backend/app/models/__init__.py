@@ -8,6 +8,10 @@ from app.models.exception_item import ExceptionItem
 from app.models.training import TrainingModule
 from app.models.maintenance import MaintenanceItem
 from app.models.vendor import Vendor
+from app.models.role_permission import RolePermission
+from app.models.membership_permission import MembershipPermission
+from app.models.rate_policy import RatePolicy
+from app.models.financial_audit import FinancialAuditLog
 
 __all__ = [
     "Business",
@@ -20,7 +24,8 @@ __all__ = [
     "TrainingModule",
     "MaintenanceItem",
     "Vendor",
+    "RolePermission",
+    "MembershipPermission",
+    "RatePolicy",
+    "FinancialAuditLog",
 ]
-from app.models.role_permission import RolePermission
-from app.models.membership_permission import MembershipPermission
-from app.models.rate_policy import RatePolicy
