@@ -23,6 +23,7 @@ from app.routes import rate_policy
 from app.routes import financial_audit
 from app.routes import permission
 from app.routes import membership
+from app.routes import membership_permission
 
 
 Base.metadata.create_all(bind=engine)
@@ -59,6 +60,7 @@ app.include_router(rate_policy.router)
 app.include_router(financial_audit.router)
 app.include_router(permission.router)
 app.include_router(membership.router)
+app.include_router(membership_permission.router)
 
 
 @app.get("/docs", include_in_schema=False)
