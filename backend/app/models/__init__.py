@@ -23,3 +23,4 @@ __all__ = [
 ]
 from app.models.role_permission import RolePermission
 from app.models.membership_permission import MembershipPermission
+from app.models.rate_policy import RatePolicy

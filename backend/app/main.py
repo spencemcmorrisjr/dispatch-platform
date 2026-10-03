@@ -10,6 +10,7 @@ from app.models import truck as truck_model
 from app.models import load as load_model
 from app.models import expense as expense_model
 from app.models import business as business_model
+from app.models import rate_policy as rate_policy_model
 from app.models import role_permission as role_permission_model
 from app.models import membership_permission as membership_permission_model
 
@@ -18,6 +19,7 @@ from app.routes import truck
 from app.routes import load
 from app.routes import expense
 from app.routes import business
+from app.routes import rate_policy
 from app.routes import permission
 from app.routes import membership
 
@@ -52,6 +54,7 @@ app.include_router(truck.router)
 app.include_router(load.router)
 app.include_router(expense.router)
 app.include_router(business.router)
+app.include_router(rate_policy.router)
 app.include_router(permission.router)
 app.include_router(membership.router)
 
