@@ -20,6 +20,7 @@ from app.routes import load
 from app.routes import expense
 from app.routes import business
 from app.routes import rate_policy
+from app.routes import financial_audit
 from app.routes import permission
 from app.routes import membership
 
@@ -55,6 +56,7 @@ app.include_router(load.router)
 app.include_router(expense.router)
 app.include_router(business.router)
 app.include_router(rate_policy.router)
+app.include_router(financial_audit.router)
 app.include_router(permission.router)
 app.include_router(membership.router)
 
