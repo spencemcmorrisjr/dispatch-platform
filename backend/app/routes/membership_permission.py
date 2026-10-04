@@ -8,6 +8,7 @@ from app.schemas.membership_permission import (
     MembershipPermissionCreate,
     MembershipPermissionRead,
 )
+from app.services.permission_guard import require_permission
 
 
 router = APIRouter(tags=["Membership Permissions"])
@@ -20,6 +21,9 @@ router = APIRouter(tags=["Membership Permissions"])
 )
 def create_membership_permission(
     assignment: MembershipPermissionCreate,
+    membership_id: int = Depends(
+        require_permission("membership_permission.assign")
+    ),
     db: Session = Depends(get_db),
 ):
     db_assignment = MembershipPermission(
@@ -49,6 +53,9 @@ def create_membership_permission(
     summary="View membership permissions",
 )
 def read_membership_permissions(
+    membership_id: int = Depends(
+        require_permission("membership_permission.view")
+    ),
     db: Session = Depends(get_db),
 ):
     return db.query(MembershipPermission).all()
