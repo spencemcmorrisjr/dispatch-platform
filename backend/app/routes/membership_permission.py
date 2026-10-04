@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -27,7 +28,16 @@ def create_membership_permission(
     )
 
     db.add(db_assignment)
-    db.commit()
+
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail="Permission is already assigned to this membership.",
+        )
+
     db.refresh(db_assignment)
 
     return db_assignment
