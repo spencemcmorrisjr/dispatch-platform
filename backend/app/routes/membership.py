@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.membership import BusinessMembership
 from app.schemas.membership import MembershipCreate, MembershipRead
+from app.services.permission_guard import require_permission
 
 
 router = APIRouter(tags=["Memberships"])
@@ -16,6 +17,9 @@ router = APIRouter(tags=["Memberships"])
 )
 def create_membership(
     membership: MembershipCreate,
+    membership_id: int = Depends(
+        require_permission("membership.create")
+    ),
     db: Session = Depends(get_db),
 ):
     db_membership = BusinessMembership(
@@ -36,5 +40,10 @@ def create_membership(
     response_model=list[MembershipRead],
     summary="View all memberships",
 )
-def read_memberships(db: Session = Depends(get_db)):
+def read_memberships(
+    membership_id: int = Depends(
+        require_permission("membership.view")
+    ),
+    db: Session = Depends(get_db),
+):
     return db.query(BusinessMembership).all()
