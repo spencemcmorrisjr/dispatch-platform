@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.permission import Permission
 from app.schemas.permission import PermissionCreate, PermissionRead
+from app.services.permission_guard import require_permission
 
 
 router = APIRouter(tags=["Permissions"])
@@ -16,6 +17,9 @@ router = APIRouter(tags=["Permissions"])
 )
 def create_permission(
     permission: PermissionCreate,
+    membership_id: int = Depends(
+        require_permission("permission.create")
+    ),
     db: Session = Depends(get_db),
 ):
     db_permission = Permission(
@@ -36,5 +40,10 @@ def create_permission(
     response_model=list[PermissionRead],
     summary="View all permissions",
 )
-def read_permissions(db: Session = Depends(get_db)):
+def read_permissions(
+    membership_id: int = Depends(
+        require_permission("permission.view")
+    ),
+    db: Session = Depends(get_db),
+):
     return db.query(Permission).all()
